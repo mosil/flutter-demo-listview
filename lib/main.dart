@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_demo_list/item_data.dart';
+import 'package:http/http.dart' as http;
 
-// use api: https://jsonplaceholder.typicode.com/
 void main() {
   runApp(const DemoApp());
 }
@@ -33,11 +35,11 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   final ScrollController _scrollController = ScrollController();
-  final int _maxCount = 1000;
+  final int _maxCount = 100;
 
   final int _count = 10;
 
-  int _currentPage = 1;
+  int _currentPage = 0;
 
   final List<ItemData> _items = [];
 
@@ -48,7 +50,7 @@ class _MainAppState extends State<MainApp> {
         userId: _currentPage,
         id: _currentPage,
         title: "My Item $i",
-        completed: false,
+        body: "",
       ));
     }
     return list;
@@ -59,11 +61,19 @@ class _MainAppState extends State<MainApp> {
   }
 
   Future<void> _fetch() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    setState(() {
-      _items.addAll(_getMockData());
-      _currentPage++;
-    });
+    Uri url = Uri.parse(
+        "https://jsonplaceholder.typicode.com/posts?_start=$_currentPage&_limit=$_count");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      dynamic jsonList = json.decode(response.body);
+
+      setState(() {
+        for (Map<String, dynamic> json in jsonList) {
+          _items.add(ItemData.fromJson(json));
+        }
+        _currentPage++;
+      });
+    }
   }
 
   @override
