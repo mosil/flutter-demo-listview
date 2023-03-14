@@ -21,13 +21,16 @@ class DemoApp extends StatelessWidget {
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({Key? key, required this.title}) : super(key: key);
+  MainApp({Key? key, required this.title}) : super(key: key);
 
   final String title;
+  final int _maxCount = 1000;
+  final int _count = 10;
+  int _currentPage = 1;
 
   List<String> _getMockData() {
     List<String> list = <String>[];
-    for (var i = 1; i <= 100; i++) {
+    for (var i = 1; i <= _count; i++) {
       list.add("My Item $i");
     }
     return list;
