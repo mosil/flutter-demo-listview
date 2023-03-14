@@ -21,12 +21,21 @@ class DemoApp extends StatelessWidget {
   }
 }
 
-class MainApp extends StatelessWidget {
-  MainApp({Key? key, required this.title}) : super(key: key);
+class MainApp extends StatefulWidget {
+  const MainApp({Key? key, required this.title}) : super(key: key);
 
   final String title;
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  final ScrollController _scrollController = ScrollController();
   final int _maxCount = 1000;
+
   final int _count = 10;
+
   int _currentPage = 1;
 
   final List<MyItemData> _items = [];
@@ -42,25 +51,50 @@ class MainApp extends StatelessWidget {
     return list;
   }
 
+  bool _hasMore() {
+    return _items.length < _maxCount;
+  }
+
+  Future<void> _fetch() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {
+      _items.addAll(_getMockData());
+      _currentPage++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
       ),
       body: _items.isEmpty
           ? const Center(
               child: Text("No Data"),
             )
           : ListView.separated(
+              controller: _scrollController,
               itemBuilder: (BuildContext context, int index) {
-                MyItemData item = _items[index];
-                return ListTile(
-                  title: Text(
-                    item.value,
-                    style: const TextStyle(fontSize: 20.0),
-                  ),
-                );
+                if (index < _items.length) {
+                  MyItemData item = _items[index];
+                  return ListTile(
+                    title: Text(
+                      item.value,
+                      style: const TextStyle(fontSize: 20.0),
+                    ),
+                    subtitle: Text("Page ${item.index}"),
+                  );
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _hasMore()
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Container(),
+                  );
+                }
               },
               separatorBuilder: (BuildContext context, int index) {
                 return Divider(
@@ -68,8 +102,29 @@ class MainApp extends StatelessWidget {
                   color: AppColors.primary().shade200,
                 );
               },
-              itemCount: _getMockData().length),
+              itemCount: _items.length + 1,
+            ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetch();
+    _scrollController.addListener(
+      () {
+        if (_scrollController.position.maxScrollExtent ==
+            _scrollController.offset) {
+          _fetch();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
   }
 }
 
