@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo_list/my_Item_data.dart';
 
 void main() {
   runApp(const DemoApp());
@@ -28,10 +29,15 @@ class MainApp extends StatelessWidget {
   final int _count = 10;
   int _currentPage = 1;
 
-  List<String> _getMockData() {
-    List<String> list = <String>[];
+  final List<MyItemData> _items = [];
+
+  List<MyItemData> _getMockData() {
+    List<MyItemData> list = <MyItemData>[];
     for (var i = 1; i <= _count; i++) {
-      list.add("My Item $i");
+      list.add(MyItemData(
+        index: _currentPage,
+        value: "My Item $i",
+      ));
     }
     return list;
   }
@@ -42,22 +48,27 @@ class MainApp extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: ListView.separated(
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(
-                _getMockData()[index],
-                style: const TextStyle(fontSize: 20.0),
-              ),
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Divider(
-              height: 8.0,
-              color: AppColors.primary().shade200,
-            );
-          },
-          itemCount: _getMockData().length),
+      body: _items.isEmpty
+          ? const Center(
+              child: Text("No Data"),
+            )
+          : ListView.separated(
+              itemBuilder: (BuildContext context, int index) {
+                MyItemData item = _items[index];
+                return ListTile(
+                  title: Text(
+                    item.value,
+                    style: const TextStyle(fontSize: 20.0),
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider(
+                  height: 8.0,
+                  color: AppColors.primary().shade200,
+                );
+              },
+              itemCount: _getMockData().length),
     );
   }
 }
