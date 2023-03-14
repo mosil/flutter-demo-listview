@@ -39,25 +39,23 @@ class MainApp extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: ListView(
-        children: _buildMockListView(),
-      ),
+      body: ListView.separated(
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(
+                _getMockData()[index],
+                style: const TextStyle(fontSize: 20.0),
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return Divider(
+              height: 8.0,
+              color: AppColors.primary().shade200,
+            );
+          },
+          itemCount: _getMockData().length),
     );
-  }
-
-  List<ListTile> _buildMockListView() {
-    List<ListTile> list = <ListTile>[];
-    for (var i in _getMockData()) {
-      list.add(
-        ListTile(
-          title: Text(
-            i,
-            style: const TextStyle(fontSize: 20.0),
-          ),
-        ),
-      );
-    }
-    return list;
   }
 }
 
