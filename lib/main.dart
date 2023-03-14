@@ -33,11 +33,11 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   final ScrollController _scrollController = ScrollController();
-  final int _maxCount = 1000;
+  final int _maxCount = 100;
 
   final int _count = 10;
 
-  int _currentPage = 1;
+  int _currentPage = 0;
 
   final List<ItemData> _items = [];
 
@@ -48,7 +48,7 @@ class _MainAppState extends State<MainApp> {
         userId: _currentPage,
         id: _currentPage,
         title: "My Item $i",
-        completed: false,
+        body: "",
       ));
     }
     return list;

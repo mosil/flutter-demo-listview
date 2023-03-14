@@ -3,11 +3,11 @@ class ItemData {
     required this.userId,
     required this.id,
     required this.title,
-    required this.completed,
+    required this.body,
   });
 
   int userId;
   int id;
   String title;
-  bool completed;
+  String body;
 }
