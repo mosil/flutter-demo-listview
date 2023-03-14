@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo_list/my_Item_data.dart';
+import 'package:flutter_demo_list/item_data.dart';
 
+// use api: https://jsonplaceholder.typicode.com/
 void main() {
   runApp(const DemoApp());
 }
@@ -38,14 +39,16 @@ class _MainAppState extends State<MainApp> {
 
   int _currentPage = 1;
 
-  final List<MyItemData> _items = [];
+  final List<ItemData> _items = [];
 
-  List<MyItemData> _getMockData() {
-    List<MyItemData> list = <MyItemData>[];
+  List<ItemData> _getMockData() {
+    List<ItemData> list = <ItemData>[];
     for (var i = 1; i <= _count; i++) {
-      list.add(MyItemData(
-        index: _currentPage,
-        value: "My Item $i",
+      list.add(ItemData(
+        userId: _currentPage,
+        id: _currentPage,
+        title: "My Item $i",
+        completed: false,
       ));
     }
     return list;
@@ -77,13 +80,13 @@ class _MainAppState extends State<MainApp> {
               controller: _scrollController,
               itemBuilder: (BuildContext context, int index) {
                 if (index < _items.length) {
-                  MyItemData item = _items[index];
+                  ItemData item = _items[index];
                   return ListTile(
                     title: Text(
-                      item.value,
+                      item.title,
                       style: const TextStyle(fontSize: 20.0),
                     ),
-                    subtitle: Text("Page ${item.index}"),
+                    subtitle: Text("Page ${item.userId}"),
                   );
                 } else {
                   return Padding(
